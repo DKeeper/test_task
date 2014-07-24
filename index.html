@@ -1,0 +1,84 @@
+<html>
+<head>
+<title>Test tas</title>
+</head>
+<body>
+<input id="search"/><input id="hide_row" type="checkbox"/>&nbsp;Скрывать строки без совпадений
+<style>
+table {
+	border: 1px solid black;
+}
+span.highlight{
+	background-color: #9BFFEE;
+}
+</style>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+$(function(){
+	var i = 10, j = 10, table = '<table>';
+	for(;i>0;i--){
+		table += '<tr>';
+		for(k=0;k<j;k++){
+			table += '<td>'+(randWD(10))+'</td>';
+		}
+		table += '</tr>';
+	}
+	$("body").append(table+'</table>');
+	$.each($("tr"),function(){
+        $(this).data("match",false);
+        $.each($(this).find("td"),function(){
+            $(this).data("val",$(this).html());
+        });
+	});
+	$("#search").keyup(function(e){
+		if(
+			(e.keyCode < 65 && e.keyCode > 90) ||
+			(e.keyCode < 48 && e.keyCode > 57)
+		) return false;
+        $.each($("tr"),function(){
+            $(this).data("match",false);
+        });
+		var searchString = '('+$(this).val()+')';
+		$.each($("td"),function(){
+			var val = $(this).data('val'),
+                $tr = $(this).parent(),
+                pattern = new RegExp(searchString,'g'),
+                replacement = "<span class='highlight'>$1</span>";
+			if(true == (match = pattern.test(val))){
+                $(this).html(val.replace(pattern,replacement));
+			} else {
+				$(this).html(val);
+			}
+            $tr.data("match",$tr.data("match")||match);
+		});
+        $.each($("tr"),function(){
+            if($("#hide_row").is(":checked")){
+                if($(this).data("match")){
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            }
+        });
+	});
+    $("#hide_row").click(function(){
+        if($("#search").val()=='') return true;
+        $.each($("tr"),function(){
+            if($("#hide_row").is(":checked")){
+                if($(this).data("match")){
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            } else {
+                $(this).show();
+            }
+        });
+    });
+});
+function randWD(n){
+  return Math.random().toString(36).slice(2, 2 + Math.max(1, Math.min(n, 10)) );
+}
+</script>
+</body>
+</html>
