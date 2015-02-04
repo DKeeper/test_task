@@ -5,63 +5,47 @@
  * @time 6:10
  * Created by JetBrains PhpStorm.
  */
-require_once(__DIR__.'/DBwrapper.php');
 require_once(__DIR__.'/helpers.php');
-
-function renderProfile($res){
-    echo viewPhpFile(__DIR__.'/view/profile.php',[
-        'user' => $res,
-    ]);
-}
-/**
- * @param string $user
- * @param string $pass
- * @param array $err
- */
-function renderLogin($user='',$pass='',$err=[]){
-    echo viewPhpFile(__DIR__.'/view/login.php',[
-        'user' => $user,
-        'pass' => $pass,
-        'err' => $err,
-    ]);
-}
+$config = require_once('config.php');
 
 if(isset($_POST['LoginForm'])){
-    $config = require_once('config.php');
     $db = new DBwrapper();
     $db->init($config['db']);
 
     $validateErr = [];
 
-    $user = $_POST['LoginForm']['username'];
+    $login = $_POST['LoginForm']['login'];
     $pass = $_POST['LoginForm']['password'];
 
-    if(empty($user)){
-        $validateErr['user'] = 'User name required';
+    if(empty($login)){
+        $validateErr['login'] = 'login required';
     }
     if(empty($pass)){
-        $validateErr['pass'] = 'Password required';
+        $validateErr['password'] = 'Password required';
     }
 
     if(!empty($validateErr)){
-        renderLogin($user,$pass,$validateErr);
+        renderLogin($login,$pass,$validateErr,$config['rules']);
         return;
     }
 
-    $validateErr['user'] = validate($user,$config['rules']['user']);
+    foreach($config['rules']['login'] as $rule){
+        if($rule['type']=='regExp')
+            $validateErr['login'] = validateRegExp($login,$rule);
 
-    if(isset($validateErr['user'])){
-        renderLogin($user,$pass,$validateErr);
-        return;
+        if(isset($validateErr['login'])){
+            renderLogin($login,$pass,$validateErr,$config['rules']);
+            return;
+        }
     }
-    $res = $db->findOne('SELECT * FROM user WHERE login LIKE :login AND password LIKE :password',[':login'=>$user,':password'=>md5($pass)]);
+    $res = $db->findOne('SELECT * FROM user WHERE login LIKE :login AND password LIKE :password',[':login'=>$login,':password'=>md5($pass)]);
     if($res){
         renderProfile($res);
     } else {
-        renderLogin($user,$pass,['summary'=>'User or Password invalid']);
+        renderLogin($login,$pass,['summary'=>'Login or Password invalid'],$config['rules']);
     }
     $t = 0;
 } else {
-    renderLogin();
+    renderLogin('','',[],$config['rules']);
 }
 ?>

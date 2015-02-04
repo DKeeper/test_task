@@ -12,9 +12,53 @@ return [
         'password' => 'RerzSwuWPzKvxNNT',
     ],
     'rules' => [
-        'user' => [
-            'pattern' => '/^[a-zA-Z0-9_]+$/',
-            'message' => 'Allowed characters: a-z, A-Z, digits and "_"',
+        'login' => [
+            ['type'=>'length','message'=>'Min length - ','min',6],
+            [
+                'type' => 'regExp',
+                'pattern' => '/^[a-zA-Z0-9_]+$/',
+                'message' => 'Allowed characters: a-z, A-Z, digits and "_"',
+            ],
+        ],
+        'password' => [
+            ['type'=>'length','message'=>'Min length - ','min',6],
+        ],
+        'email' => [
+            [
+                'type' => 'regExp',
+                'pattern' => '/^[a-zA-Z0-9!#$%&\'*+\\/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&\'*+\\/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$/',
+                'message' => 'Invalid email',
+            ]
+        ],
+        'phone' => [
+            [
+                'type' => 'regExp',
+                'pattern' => '/^\+\d{10,10}$/',
+                'message' => 'Invalid format. Only +123456789',
+            ]
+        ],
+        'first_name' => [
+            ['type'=>'length','message'=>'Max length - ','max',15],
+            [
+                'type' => 'regExp',
+                'pattern' => '/^[a-zA-Z0-9_]+$/',
+                'message' => 'Allowed characters: a-z, A-Z, digits and "_"',
+            ],
+        ],
+        'last_name' => [
+            ['type'=>'length','message'=>'Max length - ','max',15],
+            [
+                'type' => 'regExp',
+                'pattern' => '/^[a-zA-Z0-9_]+$/',
+                'message' => 'Allowed characters: a-z, A-Z, digits and "_"',
+            ],
+        ],
+        'avatar' => [
+            [
+                'type' => 'file',
+                'allowedType' => ['jpeg','gif','png'],
+                'message' => 'Allowed extension: jpg,gif,png',
+            ]
         ],
     ],
 ];

@@ -6,9 +6,10 @@
  * Created by JetBrains PhpStorm.
  */
 
-/** @var $user string */
+/** @var $login string */
 /** @var $pass string */
 /** @var $err array */
+/** @var $rules array */
 
 ?>
 <html lang="en-US"><head>
@@ -28,16 +29,17 @@
             <div class="panel-body">
                 <div class="row summary-error" style="<?= isset($err['summary']) ? '' : 'display:none;' ?>"><?= isset($err['summary']) ? $err['summary']:'' ?></div>
                 <form id="login-form" method="post" autocomplete="off">
-                    <div class="form-group field-loginform-username required">
-                        <input type="text" id="loginform-username" class="form-control <?= isset($err['user']) ? 'has-error' : '' ?>" name="LoginForm[username]" placeholder="Login" autocomplete="off" value="<?= $user ?>">
-                        <p class="help-block help-block-error"><?= isset($err['user']) ? $err['user'] : '' ?></p>
+                    <div class="form-group field-loginform-login required">
+                        <input type="text" id="loginform-login" class="form-control <?= isset($err['login']) ? 'has-error' : '' ?>" name="LoginForm[login]" placeholder="Login" autocomplete="off" value="<?= $login ?>">
+                        <p class="help-block help-block-error"><?= isset($err['login']) ? $err['login'] : '' ?></p>
                     </div>
                     <div class="form-group field-loginform-password required">
                         <input type="password" id="loginform-password" class="form-control <?= isset($err['pass']) ? 'has-error' : '' ?>" name="LoginForm[password]" placeholder="Password" autocomplete="off" value="<?= $pass ?>">
-                        <p class="help-block help-block-error"><?= isset($err['pass']) ? $err['pass'] : '' ?></p>
+                        <p class="help-block help-block-error"><?= isset($err['password']) ? $err['password'] : '' ?></p>
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">Login</button>
                 </form>
+                <a href="/test030215/registration.php">Registration</a>
             </div>
         </div>
     </div>

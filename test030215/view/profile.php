@@ -43,6 +43,10 @@
                     <div class="col-50">Last name</div>
                     <div class="col-50"><?= $user['last_name'] ?></div>
                 </div>
+                <div class="row" style="height: 125px">
+                    <div class="col-50">Avatar</div>
+                    <div class="col-50"><?= isset($user['avatar']) ? "<img width='150px' src='".$user['avatar']."'/>":"No avatar" ?></div>
+                </div>
             </div>
         </div>
     </div>
