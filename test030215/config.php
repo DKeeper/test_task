@@ -6,6 +6,7 @@
  * Created by JetBrains PhpStorm.
  */
 return [
+    'language'=>'en',
     'db' => [
         'dsn' => 'mysql:host=localhost;dbname=test',
         'user' => 'test',
@@ -13,7 +14,6 @@ return [
     ],
     'rules' => [
         'login' => [
-            ['type'=>'length','message'=>'Min length - ','min',6],
             [
                 'type' => 'regExp',
                 'pattern' => '/^[a-zA-Z0-9_]+$/',
@@ -34,7 +34,7 @@ return [
             [
                 'type' => 'regExp',
                 'pattern' => '/^\+\d{10,10}$/',
-                'message' => 'Invalid format. Only +123456789',
+                'message' => 'Invalid format. Only +1234567890',
             ]
         ],
         'first_name' => [

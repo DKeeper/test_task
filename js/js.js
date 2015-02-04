@@ -10,6 +10,11 @@ var helpers = {
         return false;
     },
 
+    switchLanguage : function(obj){
+        document.cookie = "language="+obj.value;
+        window.location.reload();
+    },
+
     validateForm : function(id) {
         var form = document.getElementById(id);
         var errors = {count:0};

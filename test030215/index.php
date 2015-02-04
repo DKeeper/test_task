@@ -8,6 +8,17 @@
 require_once(__DIR__.'/helpers.php');
 $config = require_once('config.php');
 
+if(isset($_COOKIE['language'])){
+    $config['language'] = $_COOKIE['language'];
+}
+$i18n = new i18n();
+$i18n->init($config);
+
+$validateRules = [
+    'login' => $config['rules']['login'],
+    'password' => $config['rules']['password'],
+];
+
 if(isset($_POST['LoginForm'])){
     $db = new DBwrapper();
     $db->init($config['db']);
@@ -18,14 +29,14 @@ if(isset($_POST['LoginForm'])){
     $pass = $_POST['LoginForm']['password'];
 
     if(empty($login)){
-        $validateErr['login'] = 'login required';
+        $validateErr['login'] = i18n::t('Login required');
     }
     if(empty($pass)){
-        $validateErr['password'] = 'Password required';
+        $validateErr['password'] = i18n::t('Password required');
     }
 
     if(!empty($validateErr)){
-        renderLogin($login,$pass,$validateErr,$config['rules']);
+        renderLogin($login,$pass,$validateErr,$validateRules);
         return;
     }
 
@@ -34,7 +45,7 @@ if(isset($_POST['LoginForm'])){
             $validateErr['login'] = validateRegExp($login,$rule);
 
         if(isset($validateErr['login'])){
-            renderLogin($login,$pass,$validateErr,$config['rules']);
+            renderLogin($login,$pass,$validateErr,$validateRules);
             return;
         }
     }
@@ -42,10 +53,10 @@ if(isset($_POST['LoginForm'])){
     if($res){
         renderProfile($res);
     } else {
-        renderLogin($login,$pass,['summary'=>'Login or Password invalid'],$config['rules']);
+        renderLogin($login,$pass,['summary'=>i18n::t('Login or Password invalid')],$validateRules);
     }
     $t = 0;
 } else {
-    renderLogin('','',[],$config['rules']);
+    renderLogin('','',[],$validateRules);
 }
 ?>

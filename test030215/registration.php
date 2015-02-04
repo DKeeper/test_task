@@ -8,6 +8,12 @@
 require_once(__DIR__.'/helpers.php');
 $config = require_once('config.php');
 
+if(isset($_COOKIE['language'])){
+    $config['language'] = $_COOKIE['language'];
+}
+$i18n = new i18n();
+$i18n->init($config);
+
 if(isset($_POST['RegistrationForm'])){
     $db = new DBwrapper();
     $db->init($config['db']);
@@ -51,6 +57,9 @@ if(isset($_POST['RegistrationForm'])){
 
     // Copy Image
     foreach($_FILES['RegistrationForm']['name'] as $name => $file){
+        if(!is_dir(__DIR__."/upload/")){
+            mkdir(__DIR__."/upload/");
+        }
         move_uploaded_file($_FILES['RegistrationForm']['tmp_name'][$name],__DIR__."/upload/".$_FILES['RegistrationForm']['name'][$name]);
         $userData[$name] = "/test030215/upload/".$_FILES['RegistrationForm']['name'][$name];
     }

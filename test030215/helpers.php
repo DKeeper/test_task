@@ -11,7 +11,7 @@ function validateFile($path,$config){
     $valid = true;
     if(!is_file($path)){
         $valid = false;
-        $config['message'] = 'Wrong file';
+        $config['message'] = i18n::t('Wrong file');
     } else {
         try{
             $img = new Imagick($path);
@@ -22,10 +22,10 @@ function validateFile($path,$config){
             }
         }
         catch (ImagickException $e){
-            return "File is not image";
+            return i18n::t("File is not image");
         }
     }
-    return $valid ? null : $config['message'];
+    return $valid ? null : i18n::t($config['message']);
 }
 
 /**
@@ -43,7 +43,7 @@ function validate($param,$config){
             if(strlen($param)>$config[1]) $valid=false;
             break;
     }
-    return $valid ? null : $config['message'].$config[1];
+    return $valid ? null : i18n::t($config['message'].$config[1]);
 }
 
 /**
@@ -55,7 +55,7 @@ function validateRegExp($str,$config){
     $valid = true;
     if(!preg_match($config['pattern'],$str,$matches))
         $valid = false;
-    return $valid ? null : $config['message'];
+    return $valid ? null : i18n::t($config['message']);
 }
 
 /**
@@ -89,6 +89,7 @@ function renderProfile($res){
  * @param array $rules
  */
 function renderLogin($login='',$pass='',$err=[],$rules=[]){
+    prepareRules($rules);
     echo viewPhpFile(__DIR__.'/view/login.php',[
         'login' => $login,
         'pass' => $pass,
@@ -103,11 +104,23 @@ function renderLogin($login='',$pass='',$err=[],$rules=[]){
  * @param array $rules
  */
 function renderRegistration($user=[],$err=[],$rules=[]){
+    prepareRules($rules);
     echo viewPhpFile(__DIR__.'/view/registration.php',[
         'user' => $user,
         'err' => $err,
         'rules' => $rules,
     ]);
+}
+
+/**
+ * @param array $rules
+ */
+function prepareRules(&$rules){
+    foreach($rules as $attr => $data){
+        foreach($data as $i => $rule){
+            $rules[$attr][$i]['message'] = i18n::t($rules[$attr][$i]['message']);
+        }
+    }
 }
 
 /********************************************************************************/
@@ -167,5 +180,27 @@ class DBwrapper {
      */
     public function findAll($sql,$params=[]){
         return $this->query($sql,$params)->fetchAll($this->fetchStyle);
+    }
+}
+
+class i18n{
+    public static $language = 'en';
+
+    public static $source;
+
+    public function init($config){
+        if(isset($config['language'])){
+            self::$language=$config['language'];
+        }
+        $sourceFile = __DIR__."/i18n/".self::$language."/source.php";
+        if(is_file($sourceFile)){
+            self::$source = require_once($sourceFile);
+        }
+    }
+
+    public static function t($str){
+        if(isset(self::$source[$str]))
+            return self::$source[$str];
+        else return $str;
     }
 }
