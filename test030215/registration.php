@@ -28,6 +28,8 @@ if(isset($_POST['RegistrationForm'])){
 
     $user->load($_POST['RegistrationForm']);
 
+    $user->setAttribute('password',md5($user->getAttribute('password')));
+
     if($user->validate()){
         // Copy Image
         foreach($_FILES['RegistrationForm']['name'] as $name => $file){
@@ -42,69 +44,6 @@ if(isset($_POST['RegistrationForm'])){
             return;
         }
     }
-
-//    $validateErr = [];
-//
-//    foreach($_POST['RegistrationForm'] as $name => $value){
-//        if(isset($config['rules'][$name])){
-//            foreach($config['rules'][$name] as $rule){
-//                if($rule['type']=='regExp')
-//                    $validateErr[$name] = validateRegExp($value,$rule);
-//                if($rule['type']=='length')
-//                    $validateErr[$name] = validate($value,$rule);
-//
-//                if(isset($validateErr[$name])) break;
-//            }
-//            if(is_null($validateErr[$name])) unset($validateErr[$name]);
-//        }
-//    }
-//
-//    if(isset($_FILES['RegistrationForm'])){
-//        foreach($_FILES['RegistrationForm']['name'] as $name => $file){
-//            if(isset($config['rules'][$name])){
-//                foreach($config['rules'][$name] as $rule){
-//                    if($rule['type']=='file')
-//                        $validateErr[$name] = validateFile($_FILES['RegistrationForm']['tmp_name'][$name],$rule);
-//
-//                    if(isset($validateErr[$name])) break;
-//                }
-//                if(is_null($validateErr[$name])) unset($validateErr[$name]);
-//            }
-//        }
-//    }
-
-//    if(!empty($validateErr)){
-//        renderRegistration($_POST['RegistrationForm'],$validateErr,$config['rules']);
-//        return;
-//    }
-//
-//    $userData = $_POST['RegistrationForm'];
-
-    // Copy Image
-//    foreach($_FILES['RegistrationForm']['name'] as $name => $file){
-//        if(!is_dir(__DIR__."/upload/")){
-//            mkdir(__DIR__."/upload/");
-//        }
-//        move_uploaded_file($_FILES['RegistrationForm']['tmp_name'][$name],__DIR__."/upload/".$_FILES['RegistrationForm']['name'][$name]);
-//        $userData[$name] = "/test030215/upload/".$_FILES['RegistrationForm']['name'][$name];
-//    }
-
-//    // Save user
-//    $sql = "INSERT INTO user
-//        (`login`, `password`, `email`, `phone`, `first_name`, `last_name`, `avatar`)
-//        VALUES
-//        (:l, :p, :e, :ph, :fn, :ln, :a)";
-//    if($db->query($sql,[
-//        ':l'=>$userData['login'],
-//        ':p'=>md5($userData['password']),
-//        ':e'=>$userData['email'],
-//        ':ph'=>$userData['phone'],
-//        ':fn'=>$userData['first_name'],
-//        ':ln'=>$userData['last_name'],
-//        ':a'=>$userData['avatar']]
-//    )){
-//        renderProfile($userData);
-//    }
 }
 
 renderRegistration($user);
