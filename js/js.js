@@ -1,8 +1,11 @@
 var helpers = {
     rules : {},
+    form : null,
+    err : {},
 
     init : function(config) {
-        this.rules = config;
+        this.rules = config.rules;
+        this.form = document.getElementById(config.formID);
     },
 
     selectAvatar : function() {
@@ -15,58 +18,63 @@ var helpers = {
         window.location.reload();
     },
 
-    validateForm : function(id) {
-        var form = document.getElementById(id);
-        var errors = {count:0};
-        for(ruleName in this.rules){
-            var currentRule = this.rules[ruleName];
-            var v = form.elements[id.replace("-","")+"-"+ruleName].value;
-            for(var i=0;i<currentRule.length;i++){
-                if(currentRule[i].type=="regExp"){
-                    if(errors[ruleName]!=null){
-                        var e = this.validateRegExp(v,currentRule[i]);
-                        if(e!=null)
-                            errors[ruleName] += e;
-                    } else {
-                        errors[ruleName] = this.validateRegExp(v,currentRule[i]);
-                    }
-                }
-                if(currentRule[i].type=="length"){
-                    if(errors[ruleName]!=null){
-                        var e = this.validate(v,currentRule[i]);
-                        if(e!=null)
-                            errors[ruleName] += e;
-                    } else {
-                        errors[ruleName] = this.validate(v,currentRule[i]);
-                    }
-                }
-                if(currentRule[i].type=="file"){
-                    if(errors[ruleName]!=null){
-                        var e = this.validateFile(form.elements[id.replace("-","")+"-"+ruleName].files[0],currentRule[i]);
-                        if(e!=null)
-                            errors[ruleName] += e;
-                    } else {
-                        errors[ruleName] = this.validateFile(form.elements[id.replace("-","")+"-"+ruleName].files[0],currentRule[i]);
-                    }
-                }
-                if(errors[ruleName]!=null){
-                    errors.count++;
-                }
+    updateInput : function(attr){
+        var el = this.form.elements[this.form.id.replace("-","")+"-"+attr];
+        var next = el.nextElementSibling;
+        if(typeof this.err[attr] !== "undefined"){
+            el.classList.add("has-error");
+            next.innerHTML = this.err[attr];
+        } else {
+            el.classList.remove("has-error");
+            next.innerHTML = "";
+        }
+    },
+
+    validateAttribute : function(attr){
+        var currentRule = this.rules[attr];
+        var value = this.form.elements[this.form.id.replace("-","")+"-"+attr].value;
+        var e = null;
+        for(var i=0;i<currentRule.length;i++){
+            switch(currentRule[i].type){
+                case "required":
+                    e = this.validateRequired(value,currentRule[i]);
+                    break;
+                case "regExp":
+                    e = this.validateRegExp(value,currentRule[i]);
+                    break;
+                case "length":
+                    e = this.validate(value,currentRule[i]);
+                    break;
+                case "file":
+                    e = this.validateFile(this.form.elements[this.form.id.replace("-","")+"-"+attr].files[0],currentRule[i]);
+                    break;
+            }
+            if(e!=null){
+                this.err[attr] = e;
+                break;
             }
         }
-        for(attrName in errors){
-            if(attrName=="count") continue;
-            var el = form.elements[id.replace("-","")+"-"+attrName];
-            var next = el.nextElementSibling;
-            if(errors[attrName]!==null){
-                el.classList.add("has-error");
-                next.innerHTML = errors[attrName];
-            } else {
-                el.classList.remove("has-error");
-                next.innerHTML = "";
-            }
+        if(e==null){
+            delete(this.err[attr]);
         }
-        return !errors.count>0 ;
+        this.updateInput(attr);
+    },
+
+    validateForm : function() {
+        for(attr in this.rules){
+            this.validateAttribute(attr);
+        }
+        var hasError = false;
+        for(err in this.err){
+            hasError = true;
+        }
+        return !hasError;
+    },
+
+    validateRequired : function(str,config){
+        var valid = true;
+        if(str.length == 0) valid=false;
+        return valid ? null : config['message']
     },
 
     validate : function(param,config){

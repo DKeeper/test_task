@@ -6,11 +6,9 @@
  * Created by JetBrains PhpStorm.
  */
 
-/** @var $login string */
-/** @var $pass string */
-/** @var $err array */
-/** @var $rules array */
+/** @var $user LoginForm */
 
+$err = $user->getErrors();
 ?>
 <html lang="en-US"><head>
     <meta charset="UTF-8">
@@ -34,14 +32,14 @@
                 <div class="row summary-error" style="<?= isset($err['summary']) ? '' : 'display:none;' ?>"><?= isset($err['summary']) ? $err['summary']:'' ?></div>
                 <form id="login-form" method="post" autocomplete="off">
                     <div class="form-group field-loginform-login required">
-                        <input onchange="helpers.validateForm('login-form')" type="text" id="loginform-login" class="form-control <?= isset($err['login']) ? 'has-error' : '' ?>" name="LoginForm[login]" placeholder="<?= i18n::t('Login') ?>" autocomplete="off" value="<?= $login ?>">
+                        <input onchange="helpers.validateAttribute('login')" type="text" id="loginform-login" class="form-control <?= isset($err['login']) ? 'has-error' : '' ?>" name="LoginForm[login]" placeholder="<?= i18n::t('Login') ?>" autocomplete="off" value="<?= $user->getAttribute('login') ?>">
                         <p class="help-block help-block-error"><?= isset($err['login']) ? $err['login'] : '' ?></p>
                     </div>
                     <div class="form-group field-loginform-password required">
-                        <input onchange="helpers.validateForm('login-form')" type="password" id="loginform-password" class="form-control <?= isset($err['pass']) ? 'has-error' : '' ?>" name="LoginForm[password]" placeholder="<?= i18n::t('Password') ?>" autocomplete="off" value="<?= $pass ?>">
+                        <input onchange="helpers.validateAttribute('password')" type="password" id="loginform-password" class="form-control <?= isset($err['password']) ? 'has-error' : '' ?>" name="LoginForm[password]" placeholder="<?= i18n::t('Password') ?>" autocomplete="off" value="<?= $user->getAttribute('password') ?>">
                         <p class="help-block help-block-error"><?= isset($err['password']) ? $err['password'] : '' ?></p>
                     </div>
-                    <button type="submit" onclick="return helpers.validateForm('login-form');" class="btn btn-primary btn-block"><?= i18n::t('Sign in') ?></button>
+                    <button type="submit" onclick="return helpers.validateForm();" class="btn btn-primary btn-block"><?= i18n::t('Sign in') ?></button>
                 </form>
                 <a href="/test030215/registration.php"><?= i18n::t('Registration') ?></a>
             </div>
@@ -51,7 +49,7 @@
 <script src="/js/js.js"></script>
 <script>
     window.onload = function(event){
-        helpers.init(<?= json_encode($rules) ?>);
+        helpers.init({rules:<?= json_encode($user->getRules()) ?>,formID:'login-form'});
     };
 </script>
 </body></html>
