@@ -41,7 +41,7 @@ $err = $user->getErrors();
                     </div>
                     <button type="submit" onclick="return helpers.validateForm();" class="btn btn-primary btn-block"><?= i18n::t('Sign in') ?></button>
                 </form>
-                <a href="/test030215/registration.php"><?= i18n::t('Registration') ?></a>
+                <a href="<?= TEST_BASE_URL ?>test030215/registration.php"><?= i18n::t('Registration') ?></a>
             </div>
         </div>
     </div>
