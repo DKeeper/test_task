@@ -11,8 +11,7 @@ $config = require_once('config.php');
 if(isset($_COOKIE['language'])){
     $config['language'] = $_COOKIE['language'];
 }
-$i18n = new i18n();
-$i18n->init($config);
+i18n::init($config);
 
 $validateRules = [
     'login' => $config['rules']['login'],

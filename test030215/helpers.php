@@ -188,7 +188,7 @@ class i18n{
 
     public static $source;
 
-    public function init($config){
+    public static function init($config){
         if(isset($config['language'])){
             self::$language=$config['language'];
         }

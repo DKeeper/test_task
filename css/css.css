@@ -9,7 +9,7 @@ html, body {
 	line-height: 1.42857143;
 	color: #333;
 }
-form{
+form, p{
     margin: 0;
 }
 h1,h2,h3{
@@ -68,7 +68,10 @@ a.btn{
 	top: 25%;
 }
 #registration-wrapper{
-    top: 15%;
+    top: 5%;
+}
+#registration-wrapper .panel-wrapper{
+    width: 35%;
 }
 .row{
     height: 30px;
