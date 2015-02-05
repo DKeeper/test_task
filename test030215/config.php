@@ -7,6 +7,7 @@
  */
 return [
     'language'=>'en',
+    'baseUrl'=>'/',
     'db' => [
         'dsn' => 'mysql:host=localhost;dbname=test',
         'user' => 'test',

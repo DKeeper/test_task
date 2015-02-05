@@ -15,7 +15,7 @@ $avatar = $user->getAttribute('avatar');
     <meta name="robots" content="noindex, nofollow">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= i18n::t('View profile') ?></title>
-    <link href="/css/css.css" rel="stylesheet">
+    <link href="<?= TEST_BASE_URL ?>css/css.css" rel="stylesheet">
 </head>
 <body>
 <div class="container" id="profile-wrapper">
@@ -53,5 +53,5 @@ $avatar = $user->getAttribute('avatar');
         </div>
     </div>
 </div>
-<script src="/js/js.js"></script>
+<script src="<?= TEST_BASE_URL ?>js/js.js"></script>
 </body></html>

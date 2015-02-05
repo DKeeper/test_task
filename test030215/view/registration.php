@@ -15,7 +15,7 @@ $err = $user->getErrors();
     <meta name="robots" content="noindex, nofollow">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= i18n::t('New User registration') ?></title>
-    <link href="/css/css.css" rel="stylesheet">
+    <link href="<?= TEST_BASE_URL ?>css/css.css" rel="stylesheet">
 </head>
 <body>
 <div class="container" id="registration-wrapper">
@@ -65,7 +65,7 @@ $err = $user->getErrors();
         </div>
     </div>
 </div>
-<script src="/js/js.js"></script>
+<script src="<?= TEST_BASE_URL ?>js/js.js"></script>
 <script>
     window.onload = function(event){
         helpers.init({rules:<?= json_encode($user->getRules()) ?>,formID:'registration-form'});

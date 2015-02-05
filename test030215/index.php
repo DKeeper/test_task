@@ -8,6 +8,9 @@
 require_once(__DIR__ . '/helpers/helpers.php');
 $config = require_once('config.php');
 
+// HACK - set base url path
+define('TEST_BASE_URL',$config['baseUrl']);
+
 if(isset($_COOKIE['language'])){
     $config['language'] = $_COOKIE['language'];
 }
