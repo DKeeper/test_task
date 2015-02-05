@@ -40,7 +40,7 @@ if(isset($_POST['RegistrationForm'])){
                 mkdir(__DIR__."/upload/");
             }
             move_uploaded_file($_FILES['RegistrationForm']['tmp_name'][$name],__DIR__."/upload/".$_FILES['RegistrationForm']['name'][$name]);
-            $user->setAttribute($name,"/test030215/upload/".$_FILES['RegistrationForm']['name'][$name]);
+            $user->setAttribute($name,TEST_BASE_URL."test030215/upload/".$_FILES['RegistrationForm']['name'][$name]);
         }
         if($user->save()){
             renderProfile($user);
