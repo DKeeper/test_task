@@ -30,6 +30,9 @@ $script = <<<JS
             jQuery(".navigation").css("background-image","url('$baseUrl/source/header_logo_background_bottom.png')");
             jQuery(".header-wrap").css("background-image","url('$baseUrl/source/header_logo_background_top.png')");
         }
+        var _h = 0;
+        jQuery(".header-wrap").children().each(function(){_h+=jQuery(this).height()});
+        jQuery(".header-wrap").height(_h);
     }
     // first check after load
     fixMenuBackground();
