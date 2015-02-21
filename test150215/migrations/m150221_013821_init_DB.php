@@ -1,4 +1,8 @@
 <?php
+/**
+ * Миграция, создающуя структуру таблиц Производитель, Товар.
+ * Добавляются необходимые индексы, связи и набор тестовых данных.
+ */
 
 use yii\db\Schema;
 use yii\db\Migration;
@@ -9,7 +13,7 @@ class m150221_013821_init_DB extends Migration
     {
         $this->createTable('mfr',[
             'id' => 'pk',
-            'title' => Schema::TYPE_STRING. '(30) NOT NULL',
+            'name' => Schema::TYPE_STRING. '(30) NOT NULL',
         ]);
 
         $this->createTable('product',[
@@ -22,7 +26,7 @@ class m150221_013821_init_DB extends Migration
 
         $this->addForeignKey('product_ibfk_1','product','mfr_id','mfr','id','CASCADE','CASCADE');
 
-        $this->batchInsert('mfr',['id','title'],[
+        $this->batchInsert('mfr',['id','name'],[
             [1,'Manufacturer 1'],
             [2,'Manufacturer 2'],
             [3,'Manufacturer 3'],

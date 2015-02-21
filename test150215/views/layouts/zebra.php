@@ -4,6 +4,8 @@
  * @date 17.02.15
  * @time 5:49
  * Created by JetBrains PhpStorm.
+ *
+ * Обновленный layout, в соответствии с тестовым заданием. Верстка адаптивная, но есть проблемы при показе на маленьких экранах.
  */
 use yii\helpers\Html;
 use yii\helpers\Url;

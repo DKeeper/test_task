@@ -4,6 +4,8 @@
  * @date 20.02.15
  * @time 7:49
  * Created by JetBrains PhpStorm.
+ *
+ * Модель, обеспецивающая работу с индексом в elasticsearch
  */
 namespace app\models;
 

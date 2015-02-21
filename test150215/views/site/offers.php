@@ -16,7 +16,9 @@ use yii\grid\DataColumn;
 /* @var $elasticsearch boolean */
 /* @var $active boolean */
 /* @var $err string */
+/* @var $term string */
 /* @var $data yii\data\ArrayDataProvider */
+/* @var $searchData yii\data\ArrayDataProvider */
 /* @var $form yii\widgets\ActiveForm */
 
 $this->title = 'Offers';
@@ -31,6 +33,12 @@ Icon::map($this, Icon::WHHG);
         color: #000;
         padding: 10px;
     }
+    .search-box{
+        height: 36px;
+    }
+    .document-search-index-form{
+        margin: 10px 0;
+    }
 </style>
 <div class="site-offers">
     <h1><?= Html::encode($this->title) ?></h1>
@@ -39,7 +47,34 @@ Icon::map($this, Icon::WHHG);
     if($elasticsearch){
         ?>
         Elasticsearch component status : <?= Icon::show($active?'ok':'remove', [], Icon::WHHG) ?> <?= $active?'active':'not active'?>
-        <?= empty($err) ? "" : "<code>".$err."</code>"; ?>
+        <?= empty($err) ? "" : "<code>".$err."</code>"; ?><br>
+        <?php
+        if($active){
+            ?>
+            <div class="document-search-index-form">
+                <?php $form = ActiveForm::begin(); ?>
+                <div class="input-group">
+                    <?= Html::input('text','term',$term,['class'=>'form-control search-box']) ?>
+                    <span class="input-group-btn"><?= Html::submitButton(Icon::show('search', [], Icon::WHHG), ['class' => 'btn btn-default']) ?></span>
+                </div>
+                <?php ActiveForm::end(); ?>
+            </div>
+            <?php
+            if(isset($searchData)){
+                echo GridView::widget([
+                    'dataProvider' => $searchData,
+                    'columns' => [
+                        ['class' => 'yii\grid\SerialColumn'],
+                        'name',
+                        'ext',
+                        'size:shortsize',
+                    ],
+                ]);
+            }
+            ?>
+            <?php
+        }
+        ?>
         <?= GridView::widget([
             'dataProvider' => $data,
             'columns' => [
@@ -61,7 +96,7 @@ Icon::map($this, Icon::WHHG);
         <?php
             if($active){
                 ?>
-                <div class="document-update-index-form ">
+                <div class="document-update-index-form">
                     <?php $form = ActiveForm::begin(); ?>
                     <?= Html::hiddenInput('updateIndex') ?>
                     <div class="form-group">
@@ -69,7 +104,7 @@ Icon::map($this, Icon::WHHG);
                     </div>
                     <?php ActiveForm::end(); ?>
                 </div>
-                <div class="document-clear-index-form ">
+                <div class="document-clear-index-form">
                     <?php $form = ActiveForm::begin(); ?>
                     <?= Html::hiddenInput('clearIndex') ?>
                     <div class="form-group">

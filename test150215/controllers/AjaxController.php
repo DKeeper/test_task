@@ -4,6 +4,8 @@
  * @date 18.02.15
  * @time 10:58
  * Created by JetBrains PhpStorm.
+ *
+ * Обработчик ajax-запросов
  */
 namespace app\controllers;
 
@@ -11,7 +13,6 @@ use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\web\Response;
-use yii\helpers\ArrayHelper;
 
 class AjaxController extends Controller
 {
@@ -36,6 +37,11 @@ class AjaxController extends Controller
         parent::init();
     }
 
+    /**
+     * Действие по умолчанию - возвращает пустой массив при вызове несуществующего действия
+     *
+     * @return array|mixed
+     */
     public function actionIndex(){
         if(Yii::$app->request->isAjax && isset($_POST['task'])){
             $task = $_POST['task'];
@@ -47,6 +53,11 @@ class AjaxController extends Controller
         return [];
     }
 
+    /**
+     * Возвращает список товаров для выбранного поставщика для зависимого списка
+     *
+     * @return array
+     */
     public function actionGetproducts(){
         if (isset($_POST['depdrop_parents'])) {
             $parents = $_POST['depdrop_parents'];

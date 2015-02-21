@@ -1,4 +1,8 @@
 <?php
+/**
+ * Контроллер по умолчанию.
+ * Закомментированы стандартные действия, добавлены новые в соответствии с заданием
+ */
 
 namespace app\controllers;
 
@@ -77,12 +81,18 @@ class SiteController extends Controller
         $_esErrMessage = '';
         $fileList = [];
         $dataProvider = null;
+        $searchDataProvider = null;
+        $term = '';
 
+        /**
+         * Проверяем наличие компонента elasticsearch
+         */
         if(isset($_c['elasticsearch'])){
             /** @var $_es \yii\elasticsearch\Connection */
             $_es = Yii::$app->elasticsearch;
             /** test connection */
             try{
+                /** Проверяем соединение, в случае ошибки ловим и выводим сообщение о причинах сбоя */
                 $_es->open();
                 $_esIsActive = $_es->isActive;
                 $_es->close();
@@ -92,11 +102,57 @@ class SiteController extends Controller
                 $_esErrMessage = $e->getMessage();
             }
 
+            /**
+             * Если пришел запрос на поиск в индексе
+             */
+            if(isset($_POST) && isset($_POST['term'])){
+                $term = $_POST['term'];
+                $qes = ["query"=>["match"=>["content"=>$term]]];
+                /**
+                 * Получаем результаты запроса для термина, введенного пользователем
+                 */
+                $result = EDocument::find()->createCommand()->db->get([EDocument::index(),EDocument::type(),'_search'],[],\yii\helpers\Json::encode($qes));
+                $models=[];
+                /**
+                 * Если что-то нашли, заполняем модели и получаем массив данных для дальнейшего вывода в таблице
+                 */
+                if($result['hits']['total']>0){
+                    foreach($result['hits']['hits'] as $doc){
+                        /** @var $model EDocument */
+                        $model = EDocument::instantiate($doc);
+                        EDocument::populateRecord($model, $doc);
+                        $models[] = $model->getAttributes(['name','ext','size']);
+                    }
+                }
+
+                /**
+                 * Создаем провайдер данных для найденных результатов
+                 */
+                $searchDataProvider = new ArrayDataProvider([
+                    'allModels' => $models,
+                    'sort' => [
+                        'attributes' => ['name', 'ext', 'size'],
+                    ],
+                    'pagination' => [
+                        'pageSize' => 10,
+                    ],
+                ]);
+            }
+
+            /**
+             * Если пришел запрос на удаление индекса - удаляем все имеющиеся документы
+             */
             if(isset($_POST) && isset($_POST['clearIndex'])){
                 EDocument::deleteAll();
             }
 
+            /**
+             * Сканируем папку, где находятся загруженные документы
+             */
             if(FileHelper::createDirectory(Yii::getAlias('@webroot/upload'))){
+                /**
+                 * Каждый найденный файл, если компонент активен, ищем в индексе и помечаем состояние - добавлен или нет
+                 */
                 foreach(FileHelper::findFiles(Yii::getAlias('@webroot/upload')) as $file){
                     $indexed = false;
                     if($_esIsActive){
@@ -113,10 +169,17 @@ class SiteController extends Controller
                 }
             }
 
+            /**
+             * Если пришел запрос на обновление индекса, перебираем найденные файлы и если они есть - обновляем
+             * иначе вставляем новый документ
+             */
             if(isset($_POST) && isset($_POST['updateIndex'])){
                 foreach($fileList as $i => $file){
-                    $doc = new EDocument;
-                    $doc->primaryKey = Yii::$app->security->generateRandomString();
+                    $doc = EDocument::find()->where(['name' => pathinfo($file,PATHINFO_FILENAME)])->one();
+                    if(is_null($doc)){
+                        $doc = new EDocument;
+                        $doc->primaryKey = Yii::$app->security->generateRandomString();
+                    }
                     $doc->attributes = [
                         'name' => $file['name'],
                         'ext' => $file['ext'],
@@ -128,6 +191,9 @@ class SiteController extends Controller
                 }
             }
 
+            /**
+             * Провайдер данных для документов, найденных в папке
+             */
             $dataProvider = new ArrayDataProvider([
                 'allModels' => $fileList,
                 'sort' => [
@@ -139,13 +205,13 @@ class SiteController extends Controller
             ]);
         }
 
-
-
         return $this->render('offers',[
             'elasticsearch' => isset($_c['elasticsearch']),
             'active' => $_esIsActive,
             'err' => $_esErrMessage,
             'data' => $dataProvider,
+            'searchData' => $searchDataProvider,
+            'term' => $term,
         ]);
     }
 
