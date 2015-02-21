@@ -7,17 +7,82 @@
  */
 
 use yii\helpers\Html;
+use kartik\icons\Icon;
+use yii\grid\GridView;
+use yii\widgets\ActiveForm;
+use yii\grid\DataColumn;
 
 /* @var $this yii\web\View */
+/* @var $elasticsearch boolean */
+/* @var $active boolean */
+/* @var $err string */
+/* @var $data yii\data\ArrayDataProvider */
+/* @var $form yii\widgets\ActiveForm */
+
 $this->title = 'Offers';
 $this->params['breadcrumbs'][] = $this->title;
+
+Icon::map($this, Icon::WHHG);
+
 ?>
+<style>
+    .site-offers{
+        background-color: #fff;
+        color: #000;
+        padding: 10px;
+    }
+</style>
 <div class="site-offers">
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        This is the Offers page. You may modify the following file to customize its content:
-    </p>
-
-    <code><?= __FILE__ ?></code>
+    <?php
+    if($elasticsearch){
+        ?>
+        Elasticsearch component status : <?= Icon::show($active?'ok':'remove', [], Icon::WHHG) ?> <?= $active?'active':'not active'?>
+        <?= empty($err) ? "" : "<code>".$err."</code>"; ?>
+        <?= GridView::widget([
+            'dataProvider' => $data,
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
+                'name',
+                'ext',
+                'size:shortsize',
+                [
+                    'class' => DataColumn::className(),
+                    'attribute' => 'indexed',
+                    'format' => 'html',
+                    'label' => 'Indexed',
+                    'value' => function($model){
+                        return Icon::show($model['indexed']?'ok':'remove', [], Icon::WHHG);
+                    }
+                ],
+            ],
+        ]); ?>
+        <?php
+            if($active){
+                ?>
+                <div class="document-update-index-form ">
+                    <?php $form = ActiveForm::begin(); ?>
+                    <?= Html::hiddenInput('updateIndex') ?>
+                    <div class="form-group">
+                        <?= Html::submitButton('Update index', ['class' => 'btn btn-primary']) ?>
+                    </div>
+                    <?php ActiveForm::end(); ?>
+                </div>
+                <div class="document-clear-index-form ">
+                    <?php $form = ActiveForm::begin(); ?>
+                    <?= Html::hiddenInput('clearIndex') ?>
+                    <div class="form-group">
+                        <?= Html::submitButton('Clear index', ['class' => 'btn btn-danger']) ?>
+                    </div>
+                    <?php ActiveForm::end(); ?>
+                </div>
+                <?php
+            }
+    } else {
+        ?>
+        <?= Html::a('elasticserach','https://github.com/yiisoft/yii2-elasticsearch') ?> component can not be found.
+        <?php
+    }
+    ?>
 </div>

@@ -34,7 +34,7 @@ $config = [
             'targets' => [
                 [
                     'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning'],
+                    'levels' => ['error', 'warning', 'trace'],
                 ],
             ],
         ],
@@ -72,6 +72,12 @@ $config = [
                     ]
                 ],
             ]
+        ],
+        'elasticsearch' => [
+            'class' => 'yii\elasticsearch\Connection',
+            'nodes' => [
+                ['http_address' => '127.0.0.1:9200'],
+            ],
         ],
         'db' => require(__DIR__ . '/db.php'),
     ],

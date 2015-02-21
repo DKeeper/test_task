@@ -27,8 +27,13 @@ class AjaxController extends Controller
     }
 
     public function init(){
-        parent::init();
         Yii::$app->response->format = Response::FORMAT_JSON;
+        /**
+         * В ИЕ не работает валидация токена - не передаются куки на сервер при запросах
+         * Отключено для корректной работы ajax запросов в ИЕ
+        */
+        Yii::$app->request->enableCsrfValidation = false;
+        parent::init();
     }
 
     public function actionIndex(){
