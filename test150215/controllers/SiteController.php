@@ -175,7 +175,7 @@ class SiteController extends Controller
              */
             if(isset($_POST) && isset($_POST['updateIndex'])){
                 foreach($fileList as $i => $file){
-                    $doc = EDocument::find()->where(['name' => pathinfo($file,PATHINFO_FILENAME)])->one();
+                    $doc = EDocument::find()->where(['name' => $file['name']])->one();
                     if(is_null($doc)){
                         $doc = new EDocument;
                         $doc->primaryKey = Yii::$app->security->generateRandomString();
