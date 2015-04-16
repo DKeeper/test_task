@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <title>Babylon.js sample code</title>
+        <!-- Babylon.js -->
+        <script src="js/babylon/hand.minified-1.2.js"></script>
+        <script src="js/babylon/cannon.js"></script>
+        <script src="js/babylon/oimo.js"></script>
+        <script src="js/babylon/babylon.2.0.debug.js"></script>
+        <script src="js/data.js"></script>
+        <style>
+            html, body {
+                overflow: hidden;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            #renderCanvas {
+                width: 100%;
+                height: 100%;
+                touch-action: none;
+            }
+        </style>
+    </head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <script>
+        var canvas = document.getElementById("renderCanvas");
+        var engine = new BABYLON.Engine(canvas, true);
+
+        var createScene = function () {
+        
+            var scene = new BABYLON.Scene(engine);
+
+            var skybox = BABYLON.Mesh.CreateBox("skyBox", 600.0, scene);
+            var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+            skyboxMaterial.backFaceCulling = false;
+            skybox.material = skyboxMaterial;
+            skybox.infiniteDistance = true;
+            skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+            skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+            skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("/map/textures/skybox", scene);
+            skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+
+//            var cylinder = BABYLON.Mesh.CreateCylinder("cylinder", 0.1, 6, 1, 4, 2, scene, false);
+//            cylinder.position = new BABYLON.Vector3(-15.9, 1, 71.6);
+//            var cylinder1 = BABYLON.Mesh.CreateCylinder("cylinder", 0.1, 6, 1, 4, 2, scene, false);
+//            cylinder1.position = new BABYLON.Vector3(-26.3, 1, 71.6);
+//            var cylinder2 = BABYLON.Mesh.CreateCylinder("cylinder", 0.1, 6, 1, 4, 2, scene, false);
+//            cylinder2.position = new BABYLON.Vector3(-26.3, 1, 77.6);
+//
+//            var start = BABYLON.Mesh.CreateCylinder("cylinder", 0.1, 6, 1, 4, 2, scene, false);
+//            start.position = new BABYLON.Vector3(-36.7, 1, 107.6);
+//
+//            cylinder.actionManager = new BABYLON.ActionManager(scene);
+
+            var grid = generateGrid(scene);
+            grid.actionManager = new BABYLON.ActionManager(scene);
+
+//            var material = new BABYLON.StandardMaterial("kosh", scene);
+//
+//            material.diffuseColor = new BABYLON.Color3(0, 0, 0);
+//            material.emissiveColor = new BABYLON.Color3(0.5, 0.5, 0.5);
+//            material.alpha = 0.02;
+//            material.specularPower = 16;
+//
+//            // Fresnel
+//            material.reflectionFresnelParameters = new BABYLON.FresnelParameters();
+//            material.reflectionFresnelParameters.bias = 0.1;
+//
+//            material.emissiveFresnelParameters = new BABYLON.FresnelParameters();
+//            material.emissiveFresnelParameters.bias = 0.6;
+//            material.emissiveFresnelParameters.power = 4;
+//            material.emissiveFresnelParameters.leftColor = BABYLON.Color3.White();
+//            material.emissiveFresnelParameters.rightColor = BABYLON.Color3.Black();
+//
+//            material.opacityFresnelParameters = new BABYLON.FresnelParameters();
+//            material.opacityFresnelParameters.leftColor = BABYLON.Color3.White();
+//            material.opacityFresnelParameters.rightColor = BABYLON.Color3.Black();
+//
+//            cylinder.material = material;
+
+    // Light
+//            var light = new BABYLON.DirectionalLight("dir01", new BABYLON.Vector3(-1, -2, -1), scene);
+//            light.position = new BABYLON.Vector3(20, 40, 20);
+//            light.intensity = 0.5;
+
+//            var lightSphere = BABYLON.Mesh.CreateSphere("sphere", 10, 2, scene);
+//            lightSphere.position = light.position;
+//            lightSphere.material = new BABYLON.StandardMaterial("light", scene);
+//            lightSphere.material.emissiveColor = new BABYLON.Color3(1, 1, 0);
+
+            var spot = new BABYLON.SpotLight("spot", new BABYLON.Vector3(0, 30, 10), new BABYLON.Vector3(0, -1, 0), 17, 1, scene);
+            spot.diffuse = new BABYLON.Color3(1, 1, 1);
+            spot.specular = new BABYLON.Color3(0, 0, 0);
+            spot.intensity = 0.7;
+
+            // Camera
+            var camera = new BABYLON.ArcRotateCamera("Camera", -1.56, 0.7, 200, BABYLON.Vector3.Zero(), scene);
+            camera.lowerBetaLimit = 0.2;
+            camera.upperBetaLimit = (Math.PI / 2) * 0.9;
+            camera.lowerRadiusLimit = 50;
+            camera.upperRadiusLimit = 200;
+            camera.attachControl(canvas, true);
+
+            // Ground
+            var groundMaterial = new BABYLON.StandardMaterial("ground", scene);
+            groundMaterial.diffuseTexture = new BABYLON.Texture("opp.png", scene);
+
+            var ground = BABYLON.Mesh.CreateGroundFromHeightMap("ground", "oppHM.png", 250, 250, 250, 0, 10, scene, false);
+            ground.material = groundMaterial;
+
+    //Sphere to see the light's position
+//    var sun = BABYLON.Mesh.CreateSphere("sun", 10, 2, scene);
+//    sun.material = new BABYLON.StandardMaterial("light", scene);
+//    sun.material.emissiveColor = new BABYLON.Color3(1, 1, 0);
+//
+//    //Sun animation
+//    scene.registerBeforeRender(function () {
+//        sun.position = spot.position;
+//        spot.position.x -= 0.5;
+//        if (spot.position.x < -90)
+//            spot.position.x = 100;
+//    });
+            scene.actionManager = new BABYLON.ActionManager(scene);
+
+            scene.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnKeyDownTrigger, function (evt) {
+                switch(evt.sourceEvent.keyCode){
+                    case 87 : camera.target.z++; break;
+                    case 83 : camera.target.z--; break;
+                    case 68 : camera.target.x++; break;
+                    case 65 : camera.target.x--; break;
+                }
+            }));
+
+            grid.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, function (evt) {
+                console.log(evt);
+            }));
+
+            document.body.addEventListener("pointerdown", onClickHandler, false);
+
+            scene.debugLayer.show();
+
+            return scene;
+        
+        };
+        
+        var scene = createScene();
+
+        engine.runRenderLoop(function () {
+            scene.render();
+        });
+
+        // Resize
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+
+        function onClickHandler(event){
+            var t = 0;
+        }
+
+        function generateGrid(scene){
+            var material = new BABYLON.StandardMaterial("kosh", scene);
+
+            material.diffuseColor = new BABYLON.Color3(0, 0, 0);
+            material.emissiveColor = new BABYLON.Color3(0.5, 0.5, 0.5);
+            material.alpha = 0.02;
+            material.specularPower = 16;
+
+            // Fresnel
+            material.reflectionFresnelParameters = new BABYLON.FresnelParameters();
+            material.reflectionFresnelParameters.bias = 0.1;
+
+            material.emissiveFresnelParameters = new BABYLON.FresnelParameters();
+            material.emissiveFresnelParameters.bias = 0.6;
+            material.emissiveFresnelParameters.power = 4;
+            material.emissiveFresnelParameters.leftColor = BABYLON.Color3.White();
+            material.emissiveFresnelParameters.rightColor = BABYLON.Color3.Black();
+
+            material.opacityFresnelParameters = new BABYLON.FresnelParameters();
+            material.opacityFresnelParameters.leftColor = BABYLON.Color3.White();
+            material.opacityFresnelParameters.rightColor = BABYLON.Color3.Black();
+
+            var currentVector = new BABYLON.Vector3(-99.7, 3, 107.6);
+            var deltaX = 10.45;
+            var deltaY = -3;
+            var grid = new BABYLON.Mesh("Grid", scene);
+            grid.isVisible = false;
+            var delta = 1;
+            var defCell = BABYLON.Mesh.CreateCylinder("cylinder", 0.1, 6, 1, 4, 2, scene, false);
+            var cell = null;
+            for(var y=138;y<211;y++) {
+                for(var x=4;x<=23;x++) {
+                    if(aIsland[y][x]){
+                        cell = defCell.clone();
+                        cell.isVisible = false;
+                        cell.name = x+"_"+y;
+                        cell.position = currentVector.clone();
+                        cell.parent = grid;
+                        cell.material = material;
+                    }
+                    currentVector.addInPlace(new BABYLON.Vector3(deltaX,0,0));
+                }
+                currentVector.addInPlace(new BABYLON.Vector3(-20*deltaX+deltaX/2*delta,0,deltaY));
+                delta *= -1;
+            }
+            defCell.dispose();
+            return grid;
+        }
+    </script>
+</body>
+</html>

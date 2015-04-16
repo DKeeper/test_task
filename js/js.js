@@ -32,7 +32,7 @@ var helpers = {
 
     validateAttribute : function(attr){
         var currentRule = this.rules[attr];
-        var value = this.form.elements[this.form.id.replace("-","")+"-"+attr].value;
+        var value = this.form.elements[this.form.id.replace("-","")+"-"+attr].value.trim();
         var e = null;
         for(var i=0;i<currentRule.length;i++){
             switch(currentRule[i].type){
