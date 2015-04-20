@@ -1,0 +1,23 @@
+1. Для всех таблиц применять кодировку utf8 - позволит без проблем работать с данными на разных языках.
+ALTER TABLE  `data` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE  `info` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE  `link` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+2. Добавить в таблицу `link` первичный ключ - даст возможность редактирования/удаления по одному ключу а не паре ключей
+ALTER TABLE  `link` ADD  `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST ;
+
+3. Добавить индексы для таблицы link - ускорит поиск при большом количестве данных.
+ALTER TABLE  `link` ADD INDEX (  `data_id` ) ;
+ALTER TABLE  `link` ADD INDEX (  `info_id` ) ;
+
+4. В таблице `info` заменить название поля desc на description - слово desc является зарезервированным и не рекомендуется к использования в качестве имени столбца.
+
+5. Изменить кодировку текстовых полей в таблице `info`.
+ALTER TABLE  `info` CHANGE  `name`  `name` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ;
+ALTER TABLE  `info` CHANGE  `description`  `description` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ;
+
+Изменение запроса:
+SELECT `data`. * , `info`. *
+FROM `data`
+JOIN `link` ON `link`.data_id = `data`.id
+JOIN `info` ON `link`.info_id = `info`.id

@@ -163,3 +163,18 @@ https://docs.google.com/document/d/1-qhd0_tb5UeV-TliIq-d0d5IqWRcm7Je0jRWjNyT_as/
 * /?q=replypost&id=# - ответ на пост
 
 Не опубликованные посты не видны гостям, для админа выделены красной рамкой. Ответы выделены аналогично.
+
+##Тестовое задание №7
+https://docs.google.com/document/d/1e8puNggaTQScDgL0m15k3LabtdKsSFQ8s_-9nNLENWA/edit
+
+При написании задания использовалась версия Zend 2.4.0
+
+Для корректной работы необходимо создать на одном уровне с файлами директорию Zend, содержащую следующие компонеты:
+* Db
+* Loader
+
+Для проверки доступны следующие задания:
+* issue1.php
+* issue2.txt
+* issue3.php
+* issue5.html
