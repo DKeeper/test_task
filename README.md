@@ -171,10 +171,14 @@ https://docs.google.com/document/d/1e8puNggaTQScDgL0m15k3LabtdKsSFQ8s_-9nNLENWA/
 
 Для корректной работы необходимо создать на одном уровне с файлами директорию Zend, содержащую следующие компонеты:
 * Db
+* Dom
+* EventManager
 * Loader
+* Validator
 
 Для проверки доступны следующие задания:
 * issue1.php
 * issue2.txt
 * issue3.php
+* issue4.php
 * issue5.html
